@@ -1,0 +1,36 @@
+<ion-view title="Câmera" id="page2" ng-controller="CameraCtrl">
+  <ion-content padding="true" scroll="true" class="has-header">
+    <div class="row">
+      <div class="col-33"></div>
+      <div class="col-33" col-center>
+
+        <div class="list card">
+          <div class="item item-image">
+
+            <img ng-src="{{pictureUrl}}"/>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button id="camera-button" style="font-weight:500;" class="button button-assertive button-large button-block" ng-click="fotografar()">Capturar</button>
+    <div class="spacer" style="width: 283px; height: 13px;"></div>
+    <button id="camera-button" style="font-weight:500;" class="button button-stable button-small button-block icon-right ion-ios-albums" ng-click="abrirgaleria()">Galeria de fotos</button>
+    </div>
+
+
+    <div class="list">
+      <label>Descrição</label>
+      <label class="item item-input">
+        <textarea class="textareas"> </textarea>
+        </label>
+    </div>
+
+
+
+
+
+
+  </ion-content>
+</ion-view>

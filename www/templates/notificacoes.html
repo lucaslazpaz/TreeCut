@@ -1,0 +1,22 @@
+<ion-view title="Notificações" id="page4" style="">
+  <ion-content padding="true" class="has-header">
+    <form id="notificacoes-form5" class="list">
+      <label class="item item-input" id="notificacoes-search1" style="">
+        <i class="icon ion-search placeholder-icon"></i>
+        <input placeholder="" type="search">
+      </label>
+    </form>
+
+
+
+    <ion-list>
+      <ion-item ng-repeat="notification in notifications">
+          {{notification.descricao}}
+      </ion-item>
+    </ion-list>
+
+
+
+
+  </ion-content>
+</ion-view>
