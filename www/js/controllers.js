@@ -145,6 +145,8 @@ angular.module('app.controllers', ['ngCordova'])
                 .then(function (data) {
                     $scope.pictureUrl = 'data:image/jpeg;base64,' + data;
                 });
+
+                
         }
 
 
