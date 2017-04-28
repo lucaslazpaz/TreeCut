@@ -12,6 +12,7 @@ angular.module('app.routes', [])
 
       .state('tabsController.camera', {
     url: '/page2',
+    cache: false,
     views: {
       'tab1': {
         templateUrl: 'templates/camera.html',

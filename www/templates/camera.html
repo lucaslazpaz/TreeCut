@@ -1,31 +1,67 @@
 <ion-view title="Câmera" id="page2" ng-controller="CameraCtrl">
   <ion-content padding="true" scroll="true" class="has-header">
+
+    <div class="list card">
+    <label>Fotografia</label>
     <div class="row">
       <div class="col-33"></div>
       <div class="col-33" col-center>
-
+        
         <div class="list card">
-          <div class="item item-image">
+          
+          <div class="item item-image" ng-click="showImages($index)">
 
-            <img ng-src="{{pictureUrl}}"/>
+            <img ng-src="{{pictureUrl}}" class="image-list-thumb"/>
 
           </div>
         </div>
       </div>
     </div>
 
-    <button id="camera-button" style="font-weight:500;" class="button button-assertive button-large button-block" ng-click="fotografar()">Capturar</button>
+
+   
+  
+
+   <div>     
+   <a id="camera-button" ng-click="fotografar()" class="ion-button ion-item item-right button-right round icon-only icon-right button-large ion-camera"></a>
+   </div>
+    <!--<button id="camera-button" style="font-weight:400;" class="ion-button round button-assertive button-large button-block" ng-click="fotografar()">Capturar</button>
     <div class="spacer" style="width: 283px; height: 13px;"></div>
+
     <button id="camera-button" style="font-weight:500;" class="button button-stable button-small button-block icon-right ion-ios-albums" ng-click="abrirgaleria()">Galeria de fotos</button>
+    </div>-->
     </div>
 
-
+    <div class="list card">
+      
     <div class="list">
       <label>Descrição</label>
+      
       <label class="item item-input">
         <textarea class="textareas"> </textarea>
         </label>
     </div>
+    </div>
+
+    <div class="list card">
+    <label>Endereço</label>
+      <div>       
+        <label class="item item-input" id="login-input1">
+          <textarea placeholder="Endereço..." ng-model="camera.cidade" ng-disabled="true" type="text">
+          </textarea>
+        </label>
+
+     </div>
+     <div>     
+     <a id="camera-button" class="ion-button icon-only icon-right button-large ion-android-pin" ng-click="voltarLocalizacao()"></a>
+   </div>
+     </div>
+
+
+      <div>
+        <a class="button button-balanced button-block icon-left ion-plus-circled">Criar requisição</a>
+      </div>
+       
 
 
 

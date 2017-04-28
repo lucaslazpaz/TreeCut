@@ -123,9 +123,17 @@ angular.module('app.controllers', ['ngCordova'])
 
         }])
 
-    .controller('CameraCtrl', function ($scope, $cordovaCamera) {
+    .controller('CameraCtrl', function ($scope, $cordovaCamera, $rootScope, $state, $ionicModal) {
 
-        $scope.pictureUrl = 'http://placehold.it/300?text=Inserir+Imagem';
+        console.log($rootScope.formatted_address);
+
+        $scope.voltarLocalizacao = function () {
+            $state.go('tabsController.localizacao');
+        };
+
+        $scope.camera = { cidade: $rootScope.formatted_address };
+
+        $scope.pictureUrl = 'http://placehold.it/600x400?text=Inserir+Imagem';
 
         $scope.fotografar = function () {
 
@@ -139,6 +147,33 @@ angular.module('app.controllers', ['ngCordova'])
                 });
         }
 
+
+
+
+        // ModalImage
+        $scope.showImages = function (index) {
+            $scope.activeSlide = index;
+            $scope.showModal('templates/imagemmodal.html');
+        }
+
+        $scope.showModal = function (templateUrl) {
+            $ionicModal.fromTemplateUrl(templateUrl, {
+                scope: $scope,
+                animation: 'slide-in-up'
+            }).then(function (modal) {
+                $scope.modal = modal;
+                $scope.modal.show();
+            });
+        }
+
+        // Close the modal
+        $scope.closeModal = function () {
+            $scope.modal.hide();
+            $scope.modal.remove()
+        };
+
+
+
         $scope.abrirgaleria = function () {
 
             var options = {
@@ -151,12 +186,14 @@ angular.module('app.controllers', ['ngCordova'])
             }, function (err) {
                 // error
             });
+
+
         }
 
     })
 
 
-    .controller('MapCtrl', function ($scope, $ionicLoading, $cordovaGeolocation, $window) {
+    .controller('MapCtrl', function ($scope, $ionicLoading, $cordovaGeolocation, $window, $rootScope, $state) {
 
         $ionicLoading.show({
 
@@ -229,14 +266,37 @@ angular.module('app.controllers', ['ngCordova'])
                 });
 
                 var geocoder = new google.maps.Geocoder();
+                var infowindow = new google.maps.InfoWindow;
                 var latlng = new google.maps.LatLng(lat, lng);
                 geocoder.geocode({ 'latLng': latlng }, function (results, status) {
-                    console.log(results[1]);
-                    $scope.cidade = Object;
-                console.log($scope.cidade);    
-                });
-                      
+                    if (status == google.maps.GeocoderStatus.OK) {
+                        if (results[1]) {
 
+                            $scope.cidade = Object;
+                            $rootScope.formatted_address = results[0].address_components[1].long_name + ", " + results[1].formatted_address;
+
+
+                            console.log($rootScope.formatted_address);
+
+                            if (results[0].types[0] == 'street_address' && results[0].address_components[1]) {
+                                streetname = results[0].address_components[1].long_name;
+                            }
+                            else if (results[0].types[0] == 'route') {
+                                streetname = results[0].address_components[0].long_name;
+                            }
+
+                            var markerAddress = results[0].address_components[1].long_name;
+                            console.log(markerAddress);
+
+                        }
+                    }
+
+
+                    $scope.pegarLocalizacao = function () {
+                        $state.go('tabsController.camera');
+                    };
+
+                });
             })
 
 
