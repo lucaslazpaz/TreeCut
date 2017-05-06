@@ -16,56 +16,48 @@ angular.module('app.controllers', ['ngCordova'])
 
         }])
 
-    .controller('notificacoesCtrl', function ($scope, $firebaseArray) {
+    .controller('notificacoesCtrl', function ($scope, $firebaseArray,buscarUsuario) {
         var ref = firebase.database().ref('notifications');
         $scope.notifications = $firebaseArray(ref);
+        $scope.lista=[];
+        buscarUsuario.get().then(function(data){
+            $scope.lista=data;
+        })
     })
 
 
 
     .controller('configuracoesCtrl', function ($scope, $ionicAuth, $state) {
         $scope.logout = function () {
-            $ionicAuth.logout();
-            $state.go('login')
+            firebase.auth().signOut().then(function () {
+                // Sign-out successful.
+            }, function (error) {
+                // An error happened.
+            });
         }
 
     })
 
-    .controller('menuCtrl', ['$scope', '$stateParams', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
-        // You can include any angular dependencies as parameters for this function
-        // TIP: Access Route Parameters for your page via $stateParams.parameterName
-        function ($scope, $stateParams) {
+    .controller('menuCtrl', function ($scope, buscarUsuario) {
+        buscarUsuario.get();
+    })
 
-
-        }])
-
-    .controller('loginCtrl', function ($scope, $stateParams, $ionicAuth, $state, $ionicLoading, ionicSuperPopup) {
+    .controller('loginCtrl', function ($scope, $stateParams, $ionicAuth, $state, $ionicLoading, ionicSuperPopup, userService) {
         $scope.user = {
             email: "",
             password: ""
         }
-
-
-
-        if ($ionicAuth.isAuthenticated()) {
-            $state.go('tabsController.camera')
-        }
-
-
-
-
+        firebase.auth().onAuthStateChanged(function (user) {
+            if (user) {
+                $state.go('tabsController.camera');
+            } else {
+                $state.go('login');
+            }
+        });
         $scope.login = function () {
-
-
             $ionicLoading.show({
-
                 template: 'Carregando...',
                 duration: 30000
-            })
-            $ionicAuth.login('basic', $scope.user).then(function () {
-                $ionicLoading.hide();
-                console.log('foi');
-                $state.go('tabsController.camera')
             })
         };
 
@@ -73,32 +65,55 @@ angular.module('app.controllers', ['ngCordova'])
 
 
 
-    .controller('cadastroCtrl', function ($scope, $ionicAuth, $ionicUser, $state, $ionicLoading, ionicSuperPopup) {
+    .controller('cadastroCtrl', function ($scope, $ionicAuth, $ionicUser, $state, $ionicLoading, ionicSuperPopup, userService) {
         $scope.user = {
             email: "",
-            password: ""
+            nome: "",
+            cidade: ""
         }
 
+        $scope.tipo = {
+            status: ""
+        };
+
+        $scope.lista =
+            [
+                { id: 1, cidade: 'São José do Rio Preto' },
+                { id: 2, cidade: 'Olimpia' },
+                { id: 3, cidade: 'SP' }
+            ]
 
         $scope.Cadastrar = function (nome, senha) {
-
-            if ($scope.user.password == senha) {
-                $ionicAuth.signup($scope.user).then(function () {
-
-                    $ionicAuth.login('basic', $scope.user).then(function () {
-                        $ionicUser.set('nome', nome);
-                        $ionicUser.save();
-                        $state.go('login')
-                        console.log('foi');
+            $scope.user.nome = nome;
+            var senha1 = document.getElementById('cadastro-input5').value;
+            console.log(senha1);
+            if (senha1 == senha) {
+                var promise = userService.createLogin($scope.user.email, senha1);
+                promise.then(function () {
+                    $ionicLoading.hide();
+                    var promise2 = userService.createUser($scope.user);
+                    promise2.then(function () {
+                        var user = firebase.auth().currentUser;
+                        user.updateProfile({ displayName: nome, photoURL: "" }).then(function () {
+                        });
+                        if ($scope.tipo.status == 1) {
+                            var promise3 = userService.createAdmin();
+                            promise3.then(function () {
+                                $state.go('tabsController.notificacoes');
+                                console.log('ooo')
+                            })
+                        } else $state.go('tabsController.camera');
                     })
-
-                }).catch(function (e) {
-                    console.log(e);
                 })
-            } else {
-                ionicSuperPopup.show("Erro!", "As senhas não se correspondem!", "error");
-                console.log('erro');
-            }
+                promise.catch(function (error) {
+                    if (error.code == 'auth/email-already-in-use')
+                        console.log("msgEmailexistente");
+                    if (error.code == 'auth/invalid-email')
+                        console.log("msgEmailinvalido");
+                    if (error.code == "auth/weak-password")
+                        console.log('senha fraca')
+                })
+            } else console.log('difente')
         }
 
         $scope.login = function () {
@@ -106,11 +121,7 @@ angular.module('app.controllers', ['ngCordova'])
                 template: 'Carregando...',
                 duration: 30000
             })
-            $ionicAuth.login('basic', $scope.user).then(function () {
-                $ionicLoading.hide();
-                console.log('foi');
-                $state.go('tabsController.camera')
-            })
+
         };
 
     })
@@ -123,20 +134,13 @@ angular.module('app.controllers', ['ngCordova'])
 
         }])
 
-    .controller('CameraCtrl', function ($scope, $cordovaCamera, $rootScope, $state, $ionicModal) {
-
-        console.log($rootScope.formatted_address);
-
+    .controller('CameraCtrl', function ($scope, $cordovaCamera, $rootScope, $state, $ionicModal, solicitacaoPoda) {
         $scope.voltarLocalizacao = function () {
             $state.go('tabsController.localizacao');
         };
-
         $scope.camera = { cidade: $rootScope.formatted_address };
-
         $scope.pictureUrl = 'http://placehold.it/600x400?text=Inserir+Imagem';
-
         $scope.fotografar = function () {
-
             $cordovaCamera.getPicture({
                 destinationType: Camera.DestinationType.DATA_URL,
                 encodingType: Camera.EncodingType.JPEG,
@@ -145,13 +149,7 @@ angular.module('app.controllers', ['ngCordova'])
                 .then(function (data) {
                     $scope.pictureUrl = 'data:image/jpeg;base64,' + data;
                 });
-
-                
         }
-
-
-
-
         // ModalImage
         $scope.showImages = function (index) {
             $scope.activeSlide = index;
@@ -173,8 +171,22 @@ angular.module('app.controllers', ['ngCordova'])
             $scope.modal.hide();
             $scope.modal.remove()
         };
-
-
+        $scope.obj = {
+            detalhes: ""
+        }
+        $scope.salvar = function (cidade) {
+            var user = firebase.auth().currentUser;
+            var obj = {
+                endereco: cidade,
+                img:$scope.pictureUrl,
+                uid: user.uid,
+                detalhes: $scope.obj.detalhes
+            }
+           var promise=solicitacaoPoda.createSolicitacao(obj);
+           promise.then(function(){
+               console.log('cadastrou foda')
+           })
+        }
 
         $scope.abrirgaleria = function () {
 
@@ -289,11 +301,8 @@ angular.module('app.controllers', ['ngCordova'])
 
                             var markerAddress = results[0].address_components[1].long_name;
                             console.log(markerAddress);
-
                         }
                     }
-
-
                     $scope.pegarLocalizacao = function () {
                         $state.go('tabsController.camera');
                     };

@@ -55,7 +55,8 @@ angular.module('app.routes', [])
   .state('tabsController', {
     url: '/page1',
     templateUrl: 'templates/tabsController.html',
-    abstract:true
+    abstract:true,
+    controller:'menuCtrl'
   })
 
   .state('login', {

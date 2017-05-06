@@ -9,11 +9,22 @@
 
 
 
-    <ion-list>
+
+<ion-list>
+   <div ng-repeat="array in lista">  
+<a class="item item-thumbnail-left" href="#">
+     <img src="{{array.img || 'img/ionic.png'}}">
+      <h2>{{array.endereco}}</h2>
+    <p>{{array.detalhes}}</p>
+    </a>
+</div>
+</ion-list>
+
+    <!--<ion-list>
       <ion-item ng-repeat="notification in notifications">
           {{notification.descricao}}
       </ion-item>
-    </ion-list>
+    </ion-list>-->
 
 
 

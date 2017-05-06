@@ -17,11 +17,6 @@
         </div>
       </div>
     </div>
-
-
-   
-  
-
    <div>     
    <a id="camera-button" ng-click="fotografar()" class="ion-button ion-item item-right button-right round icon-only icon-right button-large ion-camera"></a>
    </div>
@@ -38,7 +33,7 @@
       <label>Descrição</label>
       
       <label class="item item-input">
-        <textarea class="textareas"> </textarea>
+        <textarea ng-model="obj.detalhes" class="textareas"> </textarea>
         </label>
     </div>
     </div>
@@ -56,17 +51,8 @@
      <a id="camera-button" class="ion-button icon-only icon-right button-large ion-android-pin" ng-click="voltarLocalizacao()"></a>
    </div>
      </div>
-
-
       <div>
-        <a class="button button-balanced button-block icon-left ion-plus-circled">Criar requisição</a>
+        <a class="button button-balanced button-block icon-left ion-plus-circled" ng-click="salvar(camera.cidade)">Criar requisição</a>
       </div>
-       
-
-
-
-
-
-
   </ion-content>
 </ion-view>
