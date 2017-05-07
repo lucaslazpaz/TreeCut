@@ -20,6 +20,9 @@ angular.module('app.services', [])
             var promise = firebase.database().ref('solicitacaoAdm/' + user.uid).set(obj);
             return promise;
         }
+
+        
+
     })
 
     .service('solicitacaoPoda',function(){

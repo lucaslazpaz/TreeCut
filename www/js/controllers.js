@@ -16,12 +16,12 @@ angular.module('app.controllers', ['ngCordova'])
 
         }])
 
-    .controller('notificacoesCtrl', function ($scope, $firebaseArray,buscarUsuario) {
+    .controller('notificacoesCtrl', function ($scope, $firebaseArray, buscarUsuario) {
         var ref = firebase.database().ref('notifications');
         $scope.notifications = $firebaseArray(ref);
-        $scope.lista=[];
-        buscarUsuario.get().then(function(data){
-            $scope.lista=data;
+        $scope.lista = [];
+        buscarUsuario.get().then(function (data) {
+            $scope.lista = data;
         })
     })
 
@@ -54,13 +54,42 @@ angular.module('app.controllers', ['ngCordova'])
                 $state.go('login');
             }
         });
-        $scope.login = function () {
+        $scope.login = function (email, password) {
+
             $ionicLoading.show({
                 template: 'Carregando...',
-                duration: 30000
+                duration: 300
             })
-        };
 
+
+            firebase.auth().signInWithEmailAndPassword($scope.user.email, $scope.user.password)
+
+                .catch(function (error) {
+                    // Handle Errors here.
+                    var errorCode = error.code;
+                    if (errorCode == 'auth/invalid-email') {
+                        ionicSuperPopup.show('Erro!', 'E-mail inválido!', 'error');
+                    }
+
+                    if (error.code == 'auth/user-disabled') {
+                        ionicSuperPopup.show('Aviso!', 'Acesso bloqueado!', 'warning');
+                    }
+
+                    if (error.code == "auth/user-not-found") {
+                        ionicSuperPopup.show('Erro!', 'E-mail não cadastrado!', 'error');
+                    }
+
+                    if (error.code == "auth/wrong-password") {
+                        ionicSuperPopup.show('Erro!', 'Senha incorreta!', 'error');
+                    }
+                    else console.log(error);
+                });
+
+
+
+
+
+        };
     })
 
 
@@ -107,22 +136,17 @@ angular.module('app.controllers', ['ngCordova'])
                 })
                 promise.catch(function (error) {
                     if (error.code == 'auth/email-already-in-use')
-                        console.log("msgEmailexistente");
+                        ionicSuperPopup.show('Erro!', 'E-mail já cadastrado!', 'error');
+                    console.log("msgEmailexistente");
                     if (error.code == 'auth/invalid-email')
-                        console.log("msgEmailinvalido");
+                        ionicSuperPopup.show('Erro!', 'E-mail inválido!', 'error');
+                    console.log("msgEmailinvalido");
                     if (error.code == "auth/weak-password")
-                        console.log('senha fraca')
+                        ionicSuperPopup.show('Erro!', 'Senha muito fraca!', 'warning');
+                    console.log('senha fraca')
                 })
-            } else console.log('difente')
+            } else ionicSuperPopup.show('Erro!', 'As senhas não se correspondem!', 'warning');
         }
-
-        $scope.login = function () {
-            $ionicLoading.show({
-                template: 'Carregando...',
-                duration: 30000
-            })
-
-        };
 
     })
 
@@ -134,7 +158,7 @@ angular.module('app.controllers', ['ngCordova'])
 
         }])
 
-    .controller('CameraCtrl', function ($scope, $cordovaCamera, $rootScope, $state, $ionicModal, solicitacaoPoda) {
+    .controller('CameraCtrl', function ($scope, $cordovaCamera, $rootScope, $state, $ionicModal, solicitacaoPoda, ionicSuperPopup, $ionicLoading) {
         $scope.voltarLocalizacao = function () {
             $state.go('tabsController.localizacao');
         };
@@ -178,14 +202,27 @@ angular.module('app.controllers', ['ngCordova'])
             var user = firebase.auth().currentUser;
             var obj = {
                 endereco: cidade,
-                img:$scope.pictureUrl,
+                img: $scope.pictureUrl,
                 uid: user.uid,
                 detalhes: $scope.obj.detalhes
             }
-           var promise=solicitacaoPoda.createSolicitacao(obj);
-           promise.then(function(){
-               console.log('cadastrou foda')
-           })
+            var promise = solicitacaoPoda.createSolicitacao(obj);
+            promise.then(function () {
+                $ionicLoading.show({
+
+                    template: 'Carregando...',
+                    duration: 300
+                })
+                ionicSuperPopup.show('Feito!', 'Solicitação enviada com sucesso!', 'success');
+                console.log('cadastrou foda')
+                $ionicLoading.show({
+
+                    template: 'Carregando...',
+                    duration: 3000
+                })
+                $state.go('tabsController.notificacoes');
+
+            })
         }
 
         $scope.abrirgaleria = function () {
