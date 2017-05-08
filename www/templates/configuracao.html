@@ -1,7 +1,30 @@
 <ion-view title="Configurações">
     <ion-content id="pageconfig">
 
+
+
+
+
+
+        <ion-item class="item-avatar" padding="padding-horizontal">
+            <img src="{{pictureProfUrl}}" class="profile" ng-click="abrirGaleria()">
+            <p>
+                <h2 class="profile-name">Nome usuário</h2>
+            </p>
+            <p>
+                <h2>Solicitante</h2>
+            </p>
+            
+        </ion-item>
+
+
+
+
+
+        
+        
         <a ui-sref="alterarSenha" id="menu-button6" class="button button-dark  button-block button-clear" data-componentid="button6">Alterar senha</a>
-        <a  id="menu-button3" class="button button-assertive  button-block button-clear" ng-click="logout()" data-componentid="button3">Sair</a>
+        
+        <a id="menu-button3" class="button button-assertive  button-block button-clear" ng-click="logout()" data-componentid="button3">Sair</a>
     </ion-content>
 </ion-view>

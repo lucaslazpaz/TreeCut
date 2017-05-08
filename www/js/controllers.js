@@ -16,18 +16,19 @@ angular.module('app.controllers', ['ngCordova'])
 
         }])
 
-    .controller('notificacoesCtrl', function ($scope, $firebaseArray, buscarUsuario) {
+    .controller('notificacoesCtrl', function ($scope, $firebaseArray, buscarLista) {
         var ref = firebase.database().ref('notifications');
         $scope.notifications = $firebaseArray(ref);
         $scope.lista = [];
-        buscarUsuario.get().then(function (data) {
+        buscarLista.get().then(function (data) {
             $scope.lista = data;
         })
     })
 
 
 
-    .controller('configuracoesCtrl', function ($scope, $ionicAuth, $state) {
+    .controller('configuracoesCtrl', function ($scope, $ionicAuth, $state, $cordovaCamera) {
+
         $scope.logout = function () {
             firebase.auth().signOut().then(function () {
                 // Sign-out successful.
@@ -36,13 +37,43 @@ angular.module('app.controllers', ['ngCordova'])
             });
         }
 
+
+
+
+        $scope.pictureProfUrl = '../img/default-profile.png';
+        $scope.abrirGaleria = function () {
+            var options = {
+
+
+                destinationType: Camera.DestinationType.FILE_URI,
+                sourceType: Camera.PictureSourceType.PHOTOLIBRARY,
+            };
+            $cordovaCamera.getPicture(options).then(function (data) {
+                $scope.pictureProfUrl = data;
+            }, function (err) {
+                // error    
+            });
+
+
+            /*var user = firebase.auth().currentUser;
+            user.updateProfile({ displayName: nome, photoURL: "" }).then(function () {
+                $scope.usuarioNome = nome;
+            });*/
+
+
+
+
+
+        }
+
     })
 
-    .controller('menuCtrl', function ($scope, buscarUsuario) {
+    .controller('menuCtrl', function ($scope, buscarUsuario, buscarLista) {
         buscarUsuario.get();
+        buscarLista.get();
     })
 
-    .controller('loginCtrl', function ($scope, $stateParams, $ionicAuth, $state, $ionicLoading, ionicSuperPopup, userService) {
+    .controller('loginCtrl', function ($scope, $stateParams, $ionicAuth, $state, $ionicLoading, ionicSuperPopup, userService, buscarUsuario) {
         $scope.user = {
             email: "",
             password: ""
@@ -60,6 +91,7 @@ angular.module('app.controllers', ['ngCordova'])
                 template: 'Carregando...',
                 duration: 300
             })
+
 
 
             firebase.auth().signInWithEmailAndPassword($scope.user.email, $scope.user.password)
@@ -83,10 +115,8 @@ angular.module('app.controllers', ['ngCordova'])
                         ionicSuperPopup.show('Erro!', 'Senha incorreta!', 'error');
                     }
                     else console.log(error);
+
                 });
-
-
-
 
 
         };
@@ -225,21 +255,7 @@ angular.module('app.controllers', ['ngCordova'])
             })
         }
 
-        $scope.abrirgaleria = function () {
 
-            var options = {
-                destinationType: Camera.DestinationType.FILE_URI,
-                sourceType: Camera.PictureSourceType.PHOTOLIBRARY,
-            };
-
-            $cordovaCamera.getPicture(options).then(function (data) {
-                $scope.pictureUrl = data;
-            }, function (err) {
-                // error
-            });
-
-
-        }
 
     })
 

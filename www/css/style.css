@@ -53,3 +53,16 @@ map {
   padding: 20px 10px;
 
 }
+
+.profile{
+    border-radius:50%;
+    background-position:center center;
+    background-size:cover;
+    width:100%;
+    height:100%;
+}
+
+.profile-name { 
+  font-weight: bold !important;
+  text-transform: capitalize;    
+}

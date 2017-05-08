@@ -56,7 +56,7 @@ angular.module('app.services', [])
         }
     })
 
-    .factory('buscarUsuario', function ($q, ionicSuperPopup) {
+    .factory('buscarLista', function ($q, ionicSuperPopup) {
         return {
             get: function () {
                 var defer = $q.defer();
