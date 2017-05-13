@@ -77,13 +77,19 @@ angular.module('app.routes', [])
     controller: 'alterarSenhaCtrl'
   })
 
+  .state('gerenciarFuncionario', {
+    url: '/page14',
+    templateUrl: 'templates/gerenciarFuncionario.html',
+    controller:'gerenciarFuncCtrl'
+  })
 
-
-
-
+  .state('cadastrarFuncionario', {
+    url: '/page15',
+    templateUrl: 'templates/cadastrarFuncionario.html',
+    controller:'cadastroFunc'
+    
+  })
 
 $urlRouterProvider.otherwise('/page5')
-
-  
 
 });

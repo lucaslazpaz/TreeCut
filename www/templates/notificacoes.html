@@ -7,17 +7,46 @@
       </label>
     </form>
 
-
-
-
     <ion-list>
-      <div ng-repeat="array in lista">
+      
+      <ion-list-header color="Secondary">Minhas solicitações</ion-list-header>
+      
+      <div ng-repeat="array in listaAberta">
+        <a class="item item-thumbnail-left" href="#">
+          <img src="{{array.img || 'img/ionic.png'}}">
+          <h2>{{array.endereco}}</h2>
+          <p>{{array.detalhes}}</p>
+        </a>
+      
+     <div ng-show="show" class="item item-button-right">
+    Aceitar
+    <button ng-click="enviarPendente(array,$index)" class="button button-positive">
+      <i class="icon ion-ios-telephone"></i>
+    </button>
+  </div>
+
+      </div>
+      </br>
+       <ion-list-header color="Secondary">Solicitações em andamento</ion-list-header>
+      
+      <div ng-repeat="array in listaPendente">
         <a class="item item-thumbnail-left" href="#">
           <img src="{{array.img || 'img/ionic.png'}}">
           <h2>{{array.endereco}}</h2>
           <p>{{array.detalhes}}</p>
         </a>
       </div>
+      </br>
+       <ion-list-header color="Secondary">Concluídas</ion-list-header>
+      
+      <div ng-repeat="array in listaFechada">
+        <a class="item item-thumbnail-left" href="#">
+          <img src="{{array.img || 'img/ionic.png'}}">
+          <h2>{{array.endereco}}</h2>
+          <p>{{array.detalhes}}</p>
+        </a>
+      </div>
+      
     </ion-list>
 
    

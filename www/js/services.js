@@ -1,7 +1,7 @@
 angular.module('app.services', [])
 
-    .service("userService", function ($ionicLoading, $state) {
-        this.createLogin = function (email, password, obj, tipo) {
+    .service("userService", function ($ionicLoading, $state,gerenciarFunc) {
+        this.createLogin = function (email, password) {
             var promise = firebase.auth().createUserWithEmailAndPassword(email, password);
             return promise;
         }
@@ -21,17 +21,37 @@ angular.module('app.services', [])
             return promise;
         }
 
-        
-
     })
 
     .service('solicitacaoPoda',function(){
         this.createSolicitacao=function(obj){
-            var promise=firebase.database().ref('solicitacaoPoda').push(obj);
+            var promise=firebase.database().ref('solicitacaoPoda/aberto').push(obj);
             return promise;
         }
+        this.criarPendente=function(obj,id){
+            firebase.database().ref('solicitacaoPoda/pendente/'+id).set(obj).then(function(){
+                firebase.database().ref('solicitacaoPoda/aberto/'+id).remove().then(function(){
+                    console.log('apagou e salvou');
+                })
+            })
+        }
     })
-
+    .service('gerenciarFunc',function($state){
+        this.pesquisarFunc=function(email){
+           var promise=firebase.database().ref('funcionarioADM').orderByChild('email').equalTo(email).once('value');
+           return promise;
+        }
+        this.salvarFunc=function(obj){
+            firebase.database().ref('funcionarioADM').push(obj).then(function(){
+                $state.go('gerenciarFuncionario');
+            })
+        }
+        this.editarFunc=function(obj,uid){
+            firebase.database().ref('funcionarioADM/'+uid).set(obj).then(function(){
+                console.log('foi');
+            })
+        }
+    })
     .factory('buscarUsuario', function ($q, ionicSuperPopup) {
         return {
             get: function () {
@@ -40,6 +60,7 @@ angular.module('app.services', [])
                 firebase.database().ref('solicitacaoAdm/' + user.uid).on('value', function (data) {
                     if (data.val() != null) {
                         if (data.val().status == true && data.val().msgStatus == false) {
+                            defer.resolve(true);
                             ionicSuperPopup.show('Aprovado', 'Você foi aprovado com administrador', 'success')
                             var obj = {
                                 uid: user.uid,
@@ -50,8 +71,12 @@ angular.module('app.services', [])
                                 console.log('msgalterada')
                             })
                         }
+                        if(data.val().status == true) {
+                            defer.resolve(true);
+                        }
                     }
                 })
+                return defer.promise;
             }
         }
     })
@@ -67,6 +92,41 @@ angular.module('app.services', [])
                     defer.resolve(lista);
                 })
                 return defer.promise;
+            }
+        }
+    })
+
+    .factory('buscarListaAberto', function ($q, ionicSuperPopup) {
+        return {
+            get: function () {
+                var defer = $q.defer();
+                var user = firebase.auth().currentUser;
+                var lista=[];
+                firebase.database().ref('solicitacaoPoda/aberto').on('child_removed',function(data){
+                    console.log(data.val());
+                })
+                firebase.database().ref('solicitacaoPoda/aberto').on('value',function(data){
+                    lista.push(data.val());
+                    defer.resolve(data.val());
+                })
+                return defer.promise;                
+            }
+        }
+    })
+    
+
+    .factory('buscarListaPendente', function ($q, ionicSuperPopup) {
+        return {
+            get: function () {
+                var defer = $q.defer();
+                var user = firebase.auth().currentUser;
+                var lista=[]
+                firebase.database().ref('solicitacaoPoda/pendente').on('value',function(data){
+                    lista.push(data.val());
+                    defer.resolve(lista);
+                    console.log(data.val());
+                })
+                
             }
         }
     })
