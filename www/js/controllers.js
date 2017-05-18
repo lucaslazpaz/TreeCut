@@ -16,23 +16,80 @@ angular.module('app.controllers', ['ngCordova'])
 
         }])
 
-    .controller('notificacoesCtrl', function ($scope, $firebaseArray, buscarLista,solicitacaoPoda) {
+    .controller('notificacoesCtrl', function ($scope, $firebaseArray, buscarLista,buscarUsuario, solicitacaoPoda, ionicSuperPopup, $ionicModal) {
+         $scope.show = false;
+
+         buscarUsuario.get().then(function (data) {
+            if (data == true) {
+                $scope.show = true;              
+            }
+        })
+        
         var ref = firebase.database().ref('notifications');
         $scope.notifications = $firebaseArray(ref);
-        var lista=$scope.listaAberta;
+        var lista = $scope.listaAberta;
         console.log($scope.listaAberta);
-        if(lista!=null){
-         var index=Object.keys(lista);
+        if (lista != null) {
+            var index = Object.keys(lista);
         }
-       
-        $scope.enviarPendente=function(obj,id){
+        
+
+        $scope.moverRecusada = function (obj, id) {
             console.log(index);
-            solicitacaoPoda.criarPendente(obj,index[id]);
-           // $scope.listaAberta.splice(id,1);
+            solicitacaoPoda.moverRecusada(obj, index[id]);
+            ionicSuperPopup.show('Aviso!', 'Solicitação Recusada!', 'error');
+            // $scope.listaAberta.splice(id,1);
         }
+
+        $scope.excluirRecusada = function (id) {
+            console.log(index);
+            solicitacaoPoda.excluirRecusada(index[id]);
+            ionicSuperPopup.show('Aviso!', 'Solicitação Excluida!', 'error');
+            // $scope.listaAberta.splice(id,1);
+        }
+
+
+        
+
+        $ionicModal.fromTemplateUrl('templates/detalhesSolicitacao.html', {
+            scope: $scope,
+            animation: 'slide-in-up'
+        }).then(function (modal) {
+            $scope.modal = modal;
+                        
+        });
+        $scope.openModal = function (array) {
+            $scope.modal.show();            
+            $scope.detalhesModal={endereco: array.endereco,
+                          img: array.img,
+                          detalhes: array.detalhes}
+        };
+        $scope.closeModal = function () {
+            $scope.modal.hide();
+        };
+        // Cleanup the modal when we're done with it!
+        $scope.$on('$destroy', function () {
+            $scope.modal.remove();
+        });
+        // Execute action on hide modal
+        $scope.$on('modal.hidden', function () {
+            // Execute action
+        });
+        // Execute action on remove modal
+        $scope.$on('modal.removed', function () {
+            // Execute action
+        });
     })
 
-    .controller('configuracoesCtrl', function ($scope, $ionicAuth, $state, $cordovaCamera) {
+    .controller('configuracoesCtrl', function ($scope, $ionicAuth, $state, $cordovaCamera, buscarUsuario) {
+
+         $scope.show = false;
+
+         buscarUsuario.get().then(function (data) {
+            if (data == true) {
+                $scope.show = true;              
+            }
+        })
 
         $scope.logout = function () {
             firebase.auth().signOut().then(function () {
@@ -65,58 +122,71 @@ angular.module('app.controllers', ['ngCordova'])
 
     })
 
-    .controller('menuCtrl', function ($scope, buscarUsuario, buscarLista,buscarListaAberto) {
-        $scope.show=false;
-        firebase.database().ref('solicitacaoPoda/aberto').on('value',function(data){
-            $scope.listaAberta=[];
-            $scope.listaAberta=data.val();
+    .controller('menuCtrl', function ($scope, buscarUsuario, buscarLista, buscarListaAberto, buscarListaRecusada, $ionicLoading) {
+        
+        $scope.show = false;
+        
+        firebase.database().ref('solicitacaoPoda/aberto').on('value', function (data) {
+            
+            $scope.listaAberta = [];
+            $scope.listaAberta = data.val();
             console.log(data.val());
-            if(!$scope.$$phase)
-            $scope.$digest();
+            if (!$scope.$$phase)
+                $scope.$digest();
         })
-        buscarUsuario.get().then(function(data){
-            if(data==true){
-                $scope.show=true;
+        firebase.database().ref('solicitacaoPoda/recusada').on('value', function (data) {
+            
+            $scope.listaRecusada = [];
+            $scope.listaRecusada = data.val();
+            
+            if (!$scope.$$phase)
+                $scope.$digest();
+        })
+        buscarUsuario.get().then(function (data) {
+            if (data == true) {
+                $scope.show = true;
                 console.log('foi adm');
+                
             }
         })
         buscarLista.get();
+       
     })
 
-    .controller('cadastroFunc',function($scope,gerenciarFunc){
-        var auth=firebase.auth().currentUser;
-        $scope.user={
-            nome:'',
-            senha:'',
-            email:'',
-            uidADM:auth.uid,
-            auth:false
+    .controller('cadastroFunc', function ($scope, gerenciarFunc) {
+        var auth = firebase.auth().currentUser;
+        $scope.user = {
+            nome: '',
+            senha: '',
+            email: '',
+            uidADM: auth.uid,
+            auth: false
         }
-        $scope.salvarFunc=function(senha){
-            if($scope.user.senha==senha){
-            var promise1=gerenciarFunc.pesquisarFunc($scope.user.email);
-            promise1.then(function(func){
-                console.log(func)
-                if(func.val()==null){
-                    gerenciarFunc.salvarFunc($scope.user);
-                }else console.log('troca a senha');
-            })
-        }
+        $scope.salvarFunc = function (senha) {
+            if ($scope.user.senha == senha) {
+                var promise1 = gerenciarFunc.pesquisarFunc($scope.user.email);
+                promise1.then(function (func) {
+                    console.log(func)
+                    if (func.val() == null) {
+                        gerenciarFunc.salvarFunc($scope.user);
+                    } else console.log('troca a senha');
+                })
+            }
             else console.log('Troca a senha');
         }
     })
 
-    .controller('gerenciarFuncCtrl',function($scope){
-       firebase.database().ref('funcionarioADM').on('value',function(data){
-            $scope.listaFunc=data.val();
-           console.log(data.val());
-            if(!$scope.$$phase)
-            $scope.$digest();
-       })
+    .controller('gerenciarFuncCtrl', function ($scope) {
+        firebase.database().ref('funcionarioADM').on('value', function (data) {
+            $scope.listaFunc = data.val();
+            console.log(data.val());
+            if (!$scope.$$phase)
+                $scope.$digest();
+        })
     })
 
-    .controller('loginCtrl', function ($scope, $stateParams, $ionicAuth, $state, $ionicLoading, ionicSuperPopup, 
-    userService, buscarUsuario,gerenciarFunc) {
+    .controller('loginCtrl', function ($scope, $stateParams, $ionicAuth, $state, $ionicLoading, ionicSuperPopup,
+        userService, buscarUsuario, gerenciarFunc) {
         $scope.user = {
             email: "",
             password: ""
@@ -135,40 +205,40 @@ angular.module('app.controllers', ['ngCordova'])
                 duration: 300
             })
 
-            var promiseFunc=gerenciarFunc.pesquisarFunc($scope.user.email);
-            promiseFunc.then(function(func){
-                if(func.val()!=null){
-                    var id=Object.keys(func.val());
-                    var obj=Object.keys(func.val()).map(function(key){
+            var promiseFunc = gerenciarFunc.pesquisarFunc($scope.user.email);
+            promiseFunc.then(function (func) {
+                if (func.val() != null) {
+                    var id = Object.keys(func.val());
+                    var obj = Object.keys(func.val()).map(function (key) {
                         return func.val()[key];
                     })
-                if(obj[0].senha==$scope.user.password){
-                    if(obj[0].auth==false){
-                        var obj2={
-                        nome:obj[0].nome,
-                        email:obj[0].email,
-                        senha:obj[0].senha,
-                        uidADM:obj[0].uidADM,
-                        auth:true,
-                        cidade:'teste'
+                    if (obj[0].senha == $scope.user.password) {
+                        if (obj[0].auth == false) {
+                            var obj2 = {
+                                nome: obj[0].nome,
+                                email: obj[0].email,
+                                senha: obj[0].senha,
+                                uidADM: obj[0].uidADM,
+                                auth: true,
+                                cidade: 'teste'
+                            }
+                            gerenciarFunc.editarFunc(obj2, id);
+                            var promise2 = userService.createUser(obj2);
+                            promise2.then(function () {
+                                var promiseUser = gerenciarFunc.createLogin(obj2.email, obj2.senha);
+                                promiseUser.then(function () {
+                                    $state.go('tabsController.notificacoes');
+                                })
+                            })
+                        } else {
+                            login();
+                        }
                     }
-                    gerenciarFunc.editarFunc(obj2,id);
-                    var promise2=userService.createUser(obj2);
-                    promise2.then(function(){
-                       var promiseUser=gerenciarFunc.createLogin(obj2.email,obj2.senha);
-                       promiseUser.then(function(){
-                           $state.go('tabsController.notificacoes');
-                       })
-                    })
-                    }else{
-                        login();
-                    }
-                }
-                }else login();
+                } else login();
             })
         }
-        function login(){
-             firebase.auth().signInWithEmailAndPassword($scope.user.email, $scope.user.password)
+        function login() {
+            firebase.auth().signInWithEmailAndPassword($scope.user.email, $scope.user.password)
                 .catch(function (error) {
                     // Handle Errors here.
                     var errorCode = error.code;
@@ -274,7 +344,7 @@ angular.module('app.controllers', ['ngCordova'])
             $state.go('tabsController.localizacao');
         };
         $scope.camera = { cidade: $rootScope.formatted_address };
-        $scope.pictureUrl = 'http://placehold.it/600x400?text=Inserir+Imagem';
+        $scope.pictureUrl = '../img/add_photo.png';
         $scope.fotografar = function () {
             $cordovaCamera.getPicture({
                 destinationType: Camera.DestinationType.DATA_URL,
@@ -312,9 +382,9 @@ angular.module('app.controllers', ['ngCordova'])
         $scope.salvar = function (cidade) {
             $ionicLoading.show({
 
-                    template: 'Carregando...',
-                    duration: 300
-                })
+                template: 'Carregando...',
+                duration: 300
+            })
             var user = firebase.auth().currentUser;
             var obj = {
                 endereco: cidade,
@@ -439,7 +509,8 @@ angular.module('app.controllers', ['ngCordova'])
 
                 });
             })
-})
+    })
+
 
 
 

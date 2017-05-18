@@ -89,6 +89,8 @@ angular.module('app.routes', [])
     controller:'cadastroFunc'
     
   })
+  
+
 
 $urlRouterProvider.otherwise('/page5')
 
