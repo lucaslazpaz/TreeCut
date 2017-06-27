@@ -1,6 +1,6 @@
 angular.module('app.services', [])
 
-    .service("userService", function ($ionicLoading, $state, gerenciarFunc) {
+    .service('userService', function ($ionicLoading, $state, gerenciarFunc) {
         this.createLogin = function (email, password) {
             var promise = firebase.auth().createUserWithEmailAndPassword(email, password);
             return promise;
@@ -113,7 +113,7 @@ angular.module('app.services', [])
                     $ionicLoading.hide();
                 })
                 return defer.promise;
-                
+
             }
         }
     })
@@ -169,3 +169,6 @@ angular.module('app.services', [])
             }
         }
     })
+
+
+ 

@@ -1,20 +1,14 @@
 <ion-view title="Configurações">
-    <ion-content id="pageconfig">
+    <ion-content id="pageconfig" style="background-color: #D4E7FF;">
 
 
-
-
-
-
-        <ion-item class="item-avatar" padding="padding-horizontal">
-            <img src="{{pictureProfUrl}}" class="profile" ng-click="abrirGaleria()">
+        <ion-item style="background-color: #F1F5FF;">            
             <p>
-                <h2 class="profile-name">Nome usuário</h2>
+                <h2 class="profile-name">{{user.name}}</h2>
             </p>
-            <p>
-                <h2>Solicitante</h2>
-            </p>
-
+            
+                <h2>{{user.email}}</h2>
+            
         </ion-item>
 
 
@@ -23,10 +17,10 @@
 
 
 
-        <a ui-sref="alterarSenha" id="menu-button6" class="button button-dark  button-block button-clear" data-componentid="button6">Alterar senha</a>
+        <a ui-sref="alterarSenha" id="menu-button6" class="button button-dark  button-block button-clear" data-componentid="button6" style="background-color: #FFFFFF;">Alterar senha</a>
         <div ng-show="show">
-            <a ui-sref="gerenciarFuncionario" id="menu-button15" class="button button-dark  button-block button-clear" data-componentid="button6">Gerenciar funcionário(s)</a>
+            <a ui-sref="gerenciarFuncionario" id="menu-button15" class="button button-dark  button-block button-clear" data-componentid="button6" style="background-color: #FFFFFF;">Gerenciar funcionário(s)</a>
         </div>
-        <a id="menu-button3" class="button button-assertive  button-block button-clear" ng-click="logout()" data-componentid="button3">Sair</a>
+        <a id="menu-button3" class="button button-assertive  button-block button-clear" ng-click="logout()" data-componentid="button3" style="background-color: #FFFFFF;">Sair</a>
     </ion-content>
 </ion-view>

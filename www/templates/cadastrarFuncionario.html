@@ -10,9 +10,17 @@
         </label>
 
 
-        <label class="item item-input" id="cadastro-input4">
+        <label class="item item-input" id="cadastro-input4"> 
           <input placeholder="E-mail" required="true" ng-model="user.email" type="email">
         </label>
+        <label class="item item-input item-select">
+            <div class="input-label">
+              Cidade
+            </div>
+            <select ng-model="user.cidade"> 
+              <option value="{{array.cidade}}" ng-repeat="array in select.lista" >{{array.cidade}}</option>
+            </select>
+          </label>
         <label class="item item-input">
           <input placeholder="Senha" id="cadastro-input5" ng-model="user.senha" required="true" type="password">
         </label>

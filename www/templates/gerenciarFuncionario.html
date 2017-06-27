@@ -1,21 +1,36 @@
-<ion-view title="Genrenciar funcionário(s)" id="page14">
+<ion-view title="Genrenciar funcionário(s)" id="page14" hide-back-button="true">
+  <ion-nav-buttons side="left"> 
+           <a ng-click="goBackState()" class="button button-icon icon ion-ios-arrow-back"></a>
+      </ion-nav-buttons>
 
+  <ion-content padding="true" class="has-header">
+    <form id="notificacoes-form5" class="list">
+      <label class="item item-input" id="notificacoes-search1">
+        <i class="icon ion-search placeholder-icon"></i>
+        <input placeholder="" type="search">
+      </label>
+    </form>
 
-  <ion-content padding="true" scroll="false" class="has-header">
         <div class="list card">
-    <label class="balanced padding-left">Funcionários</label>
+    
+      <ion-list-header class="balanced padding-left">Funcionários</ion-list-header>
             
 
         <ion-list>
-      <div>
-        <a class="item item-thumbnail">
-          <div ng-repeat="array in listaFunc">
+      
+        <ion-item class="item item-thumbnail" ng-repeat="array in listaFunc">
+          
             <h2>{{array.nome}}</h2>
             <p>{{array.email}}</p>
-          </div>
-         
-        </a>
-      </div>
+          
+         <ion-option-button class="button-assertive">
+          <i class="ion-close-circled padding"></i> Excluir
+        </ion-option-button>
+        <ion-option-button class="button-positive">
+          <i class="ion-edit padding"></i> Editar
+        </ion-option-button>
+        </ion-item>
+      
     </ion-list>
         
 

@@ -1,20 +1,21 @@
-<ion-view title="Alterar senha" id="page7" style="">
+<ion-view title="Alterar senha" id="page7" hide-back-button="true">
+  <ion-nav-buttons side="left"> 
+           <a ng-click="goBackState()" class="button button-icon icon ion-ios-arrow-back"></a>
+      </ion-nav-buttons>
   <ion-content padding="true" class="has-header">
     <form id="alterarSenha-form3" class="list">
       <div class="spacer" style="height: 40px;"></div>
       <ion-list id="alterarSenha-list3">
-        <label class="item item-input" id="alterarSenha-input7">
-          <input placeholder="Senha antiga" type="password">
-        </label>
+        
         <label class="item item-input" id="alterarSenha-input9">
-          <input placeholder="Nova senha" type="password">
+          <input placeholder="Nova senha" type="password" ng-model="senha">
         </label>
         <label class="item item-input" id="alterarSenha-input8">
           <input placeholder="Confirmar nova senha" type="password">
         </label>
       </ion-list>
       <div class="spacer" style="height: 40px;"></div>
-      <a ui-sref="login" id="alterarSenha-button7" class="button button-balanced  button-block">Salvar</a>
+      <a id="alterarSenha-button7" class="button button-balanced  button-block" ng-click="alterarSenha(senha)">Salvar</a>
     </form>
   </ion-content>
 </ion-view>

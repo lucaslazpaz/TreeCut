@@ -1,5 +1,5 @@
 <ion-view title="Status" id="page4">
-  <ion-content padding="true" class="has-header">
+  <ion-content padding="true" class="has-header" style="background-color: #D4E7FF;">
     <form id="notificacoes-form5" class="list">
       <label class="item item-input" id="notificacoes-search1" style="">
         <i class="icon ion-search placeholder-icon"></i>
@@ -37,7 +37,7 @@
 
       <ion-list-header class="assertive padding-left">Solicitações recusadas</ion-list-header>
 
-      <ion-item ng-click="openModal()" ng-repeat="array in listaRecusada" class="item item-thumbnail-left">
+      <ion-item ng-click="openModal(array)" ng-repeat="array in listaRecusada" class="item item-thumbnail-left">
         <img src="{{array.img || '../img/ionic.png'}}">
         <h2>{{array.endereco}}</h2>
         <p>{{array.detalhes}}</p>
